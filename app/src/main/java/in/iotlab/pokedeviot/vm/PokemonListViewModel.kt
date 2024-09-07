@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import `in`.iotlab.pokedeviot.data.model.PokedexListEntry
 import `in`.iotlab.pokedeviot.data.repo.PokemonRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,33 +28,7 @@ class PokemonListViewModel @Inject constructor(
     init {
         loadPokemonPaginated()
     }
-
-    fun searchPokemonList(query: String) {
-        val listToSearch = if(isSearchStarting) {
-            pokemonList.value
-        } else {
-            cachedPokemonList
-        }
-        viewModelScope.launch(Dispatchers.Default) {
-            if(query.isEmpty()) {
-                pokemonList.value = cachedPokemonList
-                isSearching.value = false
-                isSearchStarting = true
-                return@launch
-            }
-            val results = listToSearch.filter {
-                it.pokemonName.contains(query.trim(), ignoreCase = true) ||
-                        it.number.toString() == query.trim()
-            }
-            if(isSearchStarting) {
-                cachedPokemonList = pokemonList.value
-                isSearchStarting = false
-            }
-            pokemonList.value = results
-            isSearching.value = true
-        }
-    }
-
+    
     fun loadPokemonPaginated() {
 
     }
